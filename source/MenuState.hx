@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.group.FlxTypedGroup;
 import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxRandom;
 
 /**
@@ -13,21 +14,41 @@ class MenuState extends FlxState
 {
 	public var text:FlxText;
 	public var group:FlxTypedGroup<MovingSquare>;
+	public var runes:RuneDrawingMinigame;
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
 	override public function create():Void
 	{
 		super.create();
-		text = new FlxText(50, 50, 200, "Hello World", 16);
+		text = new FlxText(50, 50, 200, "Valhalla debug menu", 16);
 		add(text);
-
-		group = new FlxTypedGroup<MovingSquare>(1800);
-
-		for(i in 0...1800){
-			group.add(new MovingSquare(FlxRandom.intRanged(0, FlxG.width), FlxRandom.intRanged(0, FlxG.height)));
-		}
-		add(group);
+		
+		runes = new RuneDrawingMinigame();
+		add(runes);
+		
+		add(new FlxButton(50, 300, "Dungeon", function():Void {
+			trace("Go to dungeon");
+		}));
+		
+		add(new FlxButton(50, 320, "Battle", function():Void {
+			trace("Go to battle");
+		}));
+		
+		add(new FlxButton(50, 340, "Score Screen", function():Void {
+			trace("Go to score screen");
+		}));
+		
+		add(new FlxButton(50, 360, "Rune Drawing", function():Void {
+			trace("Summon rune drawing minigame");
+			runes.startMinigame(new Spell(), function():Void { }, function(spell:Spell, numRunesDrawn:Int):Void { trace("Rune drawing finished!"); } );
+		}));
+		
+		add(new FlxButton(50, 380, "Message", function():Void {
+			trace("Show a message");
+		}));
+		
+		
 	}
 	
 	/**

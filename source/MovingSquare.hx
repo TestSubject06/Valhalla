@@ -2,6 +2,7 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColorUtil;
 import flixel.util.FlxRandom;
 
 class MovingSquare extends FlxSprite {
@@ -16,7 +17,8 @@ class MovingSquare extends FlxSprite {
         startX = x;
         startY = y;
         timer = 0.0;
-        makeGraphic(3, 3, 0xFFFF0000);
+        makeGraphic(3, 3, 0xFFFFFFFF);
+		color = FlxColorUtil.getRandomColor(50, 255);
         this.x = startX;
         this.y = startY;
         timeScaler = FlxRandom.floatRanged(0, 1.5);
