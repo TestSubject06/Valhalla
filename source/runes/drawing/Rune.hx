@@ -1,4 +1,4 @@
-package;
+package runes.drawing;
 
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;

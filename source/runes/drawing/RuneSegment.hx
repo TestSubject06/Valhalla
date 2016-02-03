@@ -1,4 +1,4 @@
-package;
+package runes.drawing;
 import flixel.util.FlxMath;
 import flixel.util.FlxPoint;
 import haxe.ds.Vector;

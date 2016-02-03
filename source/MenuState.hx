@@ -41,14 +41,23 @@ class MenuState extends FlxState
 		
 		add(new FlxButton(50, 360, "Rune Drawing", function():Void {
 			trace("Summon rune drawing minigame");
-			runes.startMinigame(new Spell(), function():Void { }, function(spell:Spell, numRunesDrawn:Int):Void { trace("Rune drawing finished!"); } );
+			runes.startMinigame(
+				new Spell(), 
+				function():Void { 
+					trace("Rune completed!"); 
+					
+				}, 
+				function(spell:Spell, numRunesDrawn:Int):Void { 
+					trace("Rune drawing finished! Completed " + numRunesDrawn + " runes."); 
+				} 
+			);
 		}));
 		
 		add(new FlxButton(50, 380, "Message", function():Void {
 			trace("Show a message");
 		}));
 		
-		
+		FlxG.log.redirectTraces = true;
 	}
 	
 	/**

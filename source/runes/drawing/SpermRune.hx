@@ -1,12 +1,13 @@
-package;
+package runes.drawing;
 import flixel.FlxSprite;
 import flixel.util.FlxPoint;
+import runes.drawing.Rune;
 
 /**
  * ...
  * @author Zack
  */
-class SpermRune extends Rune
+class SpermRune extends runes.drawing.Rune
 {
 
 	public function new(X:Float=0, Y:Float=0) 

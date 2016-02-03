@@ -3,9 +3,11 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.ui.FlxBar;
+import runes.keyboard.KeyboardRune;
 
 /**
  * ...
+ * A rune drawing minigame that selects different minigames based on the device the game is being played on.
  * @author Zack
  */
 class RuneDrawingMinigame extends FlxSpriteGroup
@@ -14,6 +16,7 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 	private var timer:Float;
 	private var totalTime:Float;
 	private var minigameRunning:Bool;
+	private var completedRunes:Int;
 	
 	private var runeCompleteCallback:Void->Void;
 	private var spellCompleteCallback:Spell->Int->Void;
@@ -22,10 +25,13 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 	private var spellBackdrop:FlxSprite;
 	private var spellBackdropPulse:FlxSprite;
 	
+	//Fire specific while testing
+	//TODO: Remove the hard-coded parts here.
 	private var spellBackdropFire1:FlxSprite;
 	private var spellBackdropFire2:FlxSprite;
 	private var spellBackdropFire3:FlxSprite;
 	private var spellBackdropFire4:FlxSprite;
+	private var keyboardRune:KeyboardRune;
 	
 	public function new() 
 	{
@@ -79,7 +85,8 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 		spellBackdropFire4.y = FlxG.height / 2 - spellBackdropFire4.height / 2;
 		add(spellBackdropFire4);
 		
-		add(new SpermRune(100, 100));
+		//add(new SpermRune(100, 100));
+		add((keyboardRune = new KeyboardRune()));
 	}
 	
 	override public function update():Void 
@@ -95,7 +102,8 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 			timer -= FlxG.elapsed;
 			if (timer <= 0) {
 				minigameRunning = false;
-				spellCompleteCallback(spell, 0);
+				spellCompleteCallback(spell, completedRunes);
+				keyboardRune.endRune();
 			}
 		}else {
 			visible = false;
@@ -103,7 +111,7 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 	}
 	
 	public function startMinigame(spell:Spell, runeCompleteCallback:Void->Void, spellCompleteCallback:Spell->Int->Void):Void {
-		if(!minigameRunning){
+		if (!minigameRunning) {	
 			minigameRunning = true;
 			this.runeCompleteCallback = runeCompleteCallback;
 			this.spellCompleteCallback = spellCompleteCallback;
@@ -111,6 +119,12 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 			
 			timer = totalTime;
 			visible = true;
+			var runeComplete = function():Void {
+				completedRunes++;
+				runeCompleteCallback();
+			};
+			keyboardRune.startRune(0, runeComplete);
+			completedRunes = 0;
 		}
 	}
 	
