@@ -6,6 +6,8 @@ import flixel.group.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxRandom;
+import maps.MapGenerator;
+import maps.GameMap;
 
 /**
  * A FlxState which can be used for the game's menu.
@@ -15,6 +17,7 @@ class MenuState extends FlxState
 	public var text:FlxText;
 	public var group:FlxTypedGroup<MovingSquare>;
 	public var runes:RuneDrawingMinigame;
+	public var map:GameMap;
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
@@ -27,19 +30,46 @@ class MenuState extends FlxState
 		runes = new RuneDrawingMinigame();
 		add(runes);
 		
+		map = new GameMap(54, 54);
+		map.x = 200;
+		map.y = 25;
+		map.updateTilemap();
+		add(map);
 		add(new FlxButton(50, 300, "Dungeon", function():Void {
+			//Generate a map
+			remove(map, true);
+			map = MapGenerator.generateMap(Dungeon, 54, 54, 45);
+			map.updateTilemap();
+			//Display the map
+			map.x = 200;
+			map.y = 25;
+			map.visible = true;
+			add(map);
 			trace("Go to dungeon");
 		}));
 		
-		add(new FlxButton(50, 320, "Battle", function():Void {
+		add(new FlxButton(50, 320, "Cavern", function():Void {
+			//Generate a map
+			remove(map, true);
+			map = MapGenerator.generateMap(Cavern, 54, 54, 45);
+			map.updateTilemap();
+			//Display the map
+			map.x = 200;
+			map.y = 25;
+			map.visible = true;
+			add(map);
+			trace("Go to cavern");
+		}));
+		
+		add(new FlxButton(50, 340, "Battle", function():Void {
 			trace("Go to battle");
 		}));
 		
-		add(new FlxButton(50, 340, "Score Screen", function():Void {
+		add(new FlxButton(50, 360, "Score Screen", function():Void {
 			trace("Go to score screen");
 		}));
 		
-		add(new FlxButton(50, 360, "Rune Drawing", function():Void {
+		add(new FlxButton(50, 380, "Rune Drawing", function():Void {
 			trace("Summon rune drawing minigame");
 			runes.startMinigame(
 				new Spell(), 
@@ -53,11 +83,17 @@ class MenuState extends FlxState
 			);
 		}));
 		
-		add(new FlxButton(50, 380, "Message", function():Void {
+		add(new FlxButton(50, 400, "Message", function():Void {
 			trace("Show a message");
 		}));
 		
-		FlxG.log.redirectTraces = true;
+		add(new FlxButton(50, 420, "Create Party", function():Void {
+			trace("Create a party");
+			FlxG.switchState(new PartyCreate());
+		}));
+		
+		//FlxG.log.redirectTraces = true;
+		FlxG.camera.bgColor = 0xFF111111;
 	}
 	
 	/**
