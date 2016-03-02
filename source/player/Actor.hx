@@ -51,4 +51,12 @@ class Actor
 		return name;
 	}
 	
+	public function getInventory():Array<Item> {
+		return inventory;
+	}
+	
+	public function giveItem(item:Item):Void {
+		inventory.push(item);
+	}
+	
 }

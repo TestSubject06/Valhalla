@@ -15,6 +15,7 @@ class BorderedBox extends FlxGroup
 	//var uiElement:BorderedBox = new BorderedBox(borderType, Layout.VERTICAL, width?, height?);
 	//uiElement.push(new FlxBasic());
 	//
+	//It would be nice if this had a title that was all nice and centered.
 	private var background:FlxSprite;
 	private var layout:Layout;
 	private var width:Int;
@@ -37,6 +38,12 @@ class BorderedBox extends FlxGroup
 		add(object);
 	}
 	
+	override public function clear():Void 
+	{
+		super.clear();
+		height = 0;
+	}
+	
 	public function moveTo(x:Int, y:Int) {
 		var dx = this.x - x;
 		var dy = this.y - y;
@@ -48,6 +55,8 @@ class BorderedBox extends FlxGroup
 				//Do nothing - it's not moveable.
 			}
 		}
+		this.x = x;
+		this.y = y;
 	}
 	
 	public function getHeight():Int {

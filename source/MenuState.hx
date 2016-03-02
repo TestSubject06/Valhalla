@@ -2,7 +2,9 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.group.FlxGroup;
 import flixel.group.FlxTypedGroup;
+import flixel.system.scaleModes.PixelPerfectScaleMode;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
 import flixel.util.FlxRandom;
@@ -21,43 +23,52 @@ class MenuState extends FlxState
 	/**
 	 * Function that is called up when to state is created to set it up. 
 	 */
+	private var mainLayer:FlxGroup;
+	private var effectLayer:FlxGroup;
 	override public function create():Void
 	{
 		super.create();
+		mainLayer = new FlxGroup();
+		effectLayer = new FlxGroup();
+
+		add(mainLayer);
+		add(effectLayer);
+
 		text = new FlxText(50, 50, 200, "Valhalla debug menu", 16);
-		add(text);
-		
+		mainLayer.add(text);
+
+
 		runes = new RuneDrawingMinigame();
-		add(runes);
-		
+		effectLayer.add(runes);
+
 		map = new GameMap(54, 54);
 		map.x = 200;
 		map.y = 25;
 		map.updateTilemap();
-		add(map);
+		mainLayer.add(map);
 		add(new FlxButton(50, 300, "Dungeon", function():Void {
 			//Generate a map
-			remove(map, true);
+			mainLayer.remove(map, true);
 			map = MapGenerator.generateMap(Dungeon, 54, 54, 45);
 			map.updateTilemap();
 			//Display the map
 			map.x = 200;
 			map.y = 25;
 			map.visible = true;
-			add(map);
+			mainLayer.add(map);
 			trace("Go to dungeon");
 		}));
 		
 		add(new FlxButton(50, 320, "Cavern", function():Void {
 			//Generate a map
-			remove(map, true);
+			mainLayer.remove(map, true);
 			map = MapGenerator.generateMap(Cavern, 54, 54, 45);
 			map.updateTilemap();
 			//Display the map
 			map.x = 200;
 			map.y = 25;
 			map.visible = true;
-			add(map);
+			mainLayer.add(map);
 			trace("Go to cavern");
 		}));
 		
@@ -94,6 +105,7 @@ class MenuState extends FlxState
 		
 		//FlxG.log.redirectTraces = true;
 		FlxG.camera.bgColor = 0xFF111111;
+		FlxG.scaleMode = new PixelPerfectScaleMode();
 	}
 	
 	/**
