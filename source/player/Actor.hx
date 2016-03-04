@@ -59,4 +59,28 @@ class Actor
 		inventory.push(item);
 	}
 	
+	//Icons are used where the avatar should be placed. Menus, turn orders, etc...
+	public function setIcon(sprite:FlxSprite):Void {
+		icon = sprite;
+	}
+	
+	public function getIcon():FlxSprite {
+		return icon;
+	}
+	
+	public function setBattleSprite(sprite:FlxSprite) {
+		battleSprite = sprite;
+	}
+	
+	public function getBattleSprite():FlxSprite {
+		return battleSprite;
+	}
+	
+	public function setOverworldSprite(sprite:FlxSprite) {
+		overworldSprite = sprite;
+	}
+	
+	public function getOverworldSprite():FlxSprite {
+		return overworldSprite;
+	}
 }

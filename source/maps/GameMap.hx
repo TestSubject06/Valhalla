@@ -58,8 +58,9 @@ class GameMap extends FlxTilemap
 		return true;
 	}
 	
-	public function updateTilemap():Void {
-		loadMap(mapData, AssetPaths.autotiles__png, 8, 8, FlxTilemap.AUTO);
+	public function updateTilemap(tiles:Dynamic = AssetPaths.autotiles__png, autotile:Bool = true):Void {
+		
+		loadMap(mapData, tiles, 0, 0, autotile ? FlxTilemap.AUTO : FlxTilemap.OFF, 0, 0, 1);
 	}
 	
 }

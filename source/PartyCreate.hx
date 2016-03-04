@@ -1,12 +1,17 @@
 package;
 
+import deities.Deity;
+import deities.Loki;
+import deities.Thor;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxGroup;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
+import flixel.util.FlxRandom;
 import items.Item;
 import items.Potion1;
 import items.Stick;
@@ -42,31 +47,11 @@ class PartyCreate extends FlxState
 	
 	private var party:Party;
 	private var dice:Array<Int>;
-	private var realScreen:BitmapData;
-	private var realScreen2:BitmapData;
-	private var time:Float = 0.0;
-	public var xFreq:Float = 5.0;
-	public var xSpeed:Float = 5.0;
-	public var xAmplitude:Float = 10.0;
-	public var yFreq:Float = 5.0;
-	public var ySpeed:Float = 5.0;
-	public var yAmplitude:Float = 10.0;
-	
-	override public function draw():Void 
-	{
-		super.draw();
-		time += FlxG.elapsed;
-		FlxG.log.add(time);
-		realScreen.fillRect(new Rectangle(0, 0, realScreen.width, realScreen.height), FlxG.camera.bgColor);
-		realScreen2.fillRect(new Rectangle(0, 0, realScreen.width, realScreen.height), FlxG.camera.bgColor);
-		for (i in 0...FlxG.width) {
-			realScreen.copyPixels(FlxG.camera.buffer, new Rectangle(i, 0, 1, FlxG.height), new Point(i, Math.sin( i * (yFreq / 100.0) - time * ySpeed ) * yAmplitude));
-		}
-		for (k in 0...FlxG.height) {
-			realScreen2.copyPixels(realScreen, new Rectangle(0, k, FlxG.width, 1), new Point(1*Math.sin( k * (xFreq/100.0) - time * xSpeed ) * xAmplitude, k));
-		}
-		FlxG.camera.buffer.copyPixels(realScreen2, new Rectangle(0, 0, FlxG.width, FlxG.height), new Point(0, 0));
-	}
+	private var page:Int = 0;
+	private var page1:FlxGroup;
+	private var page2:FlxGroup;
+	private var selectorSprite:FlxSprite;
+	private var selectedDeity:Int = 0;
 	
 	override public function create():Void 
 	{
@@ -74,12 +59,12 @@ class PartyCreate extends FlxState
 		party = new Party();
 		dice = [5, 5, 5];
 		
-		realScreen = new BitmapData(FlxG.width, FlxG.width);
-		realScreen2 = new BitmapData(FlxG.width, FlxG.width);
+		page1 = new FlxGroup();
+		page2 = new FlxGroup();
 		
 		var text = new FlxText(FlxG.width / 2 - 150, 2, 300, "Create a Party", 16);
 		text.alignment = "center";
-		add(text);
+		page1.add(text);
 		
 		//Character 1
 		var character1:Actor = createCharacter();
@@ -90,14 +75,14 @@ class PartyCreate extends FlxState
 		party.addActor(character3);
 		
 		var characterBox:BorderedBox = new BorderedBox(10, 35, 0, Layout.VERTICAL);
-		add(characterBox);
+		page1.add(characterBox);
 		
 		var box:BorderedBox = new BorderedBox(10, 35 + characterBox.getHeight(), 0, Layout.VERTICAL);
-		add(box);
+		page1.add(box);
 		populateStatsForBox(character1.getBaseStats(), box);
 		
 		var inventoryBox:BorderedBox = new BorderedBox(FlxG.width - 160, 35, 0, Layout.VERTICAL);
-		add(inventoryBox);
+		page1.add(inventoryBox);
 		populateInvForBox(character1.getInventory(), inventoryBox);
 		
 		characterBox.push(new FlxButton(0, 0, character1.getName(), function():Void {
@@ -128,27 +113,135 @@ class PartyCreate extends FlxState
 		
 		var text = new FlxText(FlxG.width / 2 - 150, FlxG.height - 25, 300, "Re-rolls: " + dice[0], 8);
 		text.alignment = "center";
-		add(text);
+		page1.add(text);
 		
-		add(new FlxButton(FlxG.width - 90, FlxG.height - 30, "Next", function():Void {
-			trace("Next step of party creation");
+		page1.add(new FlxButton(FlxG.width - 90, FlxG.height - 30, "Next", function():Void {
+			flipToPage(1);
 		}));
 		
 		var sprite:FlxSprite = new FlxSprite(FlxG.width / 2 - 70, 50, null);
 		sprite.makeGraphic(140, 140, 0xFF666666);
-		add(sprite);
-		add(new FlxText(FlxG.width / 2 - 70, 70, 140, "Avatar"));
+		sprite.stamp(character1.getIcon(), 15, 15);
+		page1.add(sprite);
+		page1.add(new FlxText(FlxG.width / 2 - 70, 70, 140, "Avatar"));
 		
 		sprite = new FlxSprite(FlxG.width / 2 - 100, FlxG.height - 270, null);
 		sprite.makeGraphic(200, 200, 0xFF666666);
-		add(sprite);
-		add(new FlxText(FlxG.width / 2 - 70, FlxG.height - 180, 200, "Battle Sprite"));
+		sprite.stamp(character1.getBattleSprite(), 15, 15);
+		page1.add(sprite);
+		page1.add(new FlxText(FlxG.width / 2 - 70, FlxG.height - 180, 200, "Battle Sprite"));
 		
-
+		//Page 2:
+		text = new FlxText(FlxG.width / 2 - 150, 2, 300, "Select a Deity", 16);
+		text.alignment = "center";
+		page2.add(text);
+		
+		page2.add(new FlxButton(10, FlxG.height - 30, "Prev", function():Void {
+			flipToPage(0);
+		}));
+		
+		page2.add(new FlxButton(FlxG.width - 90, FlxG.height - 30, "Done", function():Void {
+			trace("Move on...");
+			party.setDeity(getDeityFromId(selectedDeity));
+			trace(party.getDeity().getName());
+			PartyInformation.setParty(party);
+			FlxG.switchState(new MenuState());//TODO: Replace with a real next-state
+		}));
+		
+		selectorSprite = new FlxSprite(0, 35, null);
+		selectorSprite.makeGraphic(260, 260);
+		page2.add(selectorSprite);
+		
+		var thorBox:BorderedBox = new BorderedBox(20, 35, 0, Layout.VERTICAL);
+		var thorIcon:FlxSprite = new FlxSprite(0, 0, AssetPaths.ThorHammerIcon__jpg);
+		thorIcon.scale.set(0.5, 0.5);
+		thorIcon.updateHitbox();
+		thorBox.push(thorIcon);
+		thorBox.push(new FlxText(0, 0, 250, "Thor", 16));
+		thorBox.push(new FlxText(0, 0, 250, "", 8));
+		thorBox.push(new FlxText(0, 0, 250, "Demigod of thunder", 12));
+		thorBox.push(new FlxText(0, 0, 250, "", 8));
+		thorBox.push(new FlxText(0, 0, 250, "", 8));
+		thorBox.push(new FlxText(0, 0, 250, "Increases all characters' attack by 10%", 8));
+		thorBox.push(new FlxText(0, 0, 250, "Increases all front row characters' defense by 5%", 8));
+		thorBox.push(new FlxText(0, 0, 250, "BLAH BLAH BUFFS", 8));
+		thorBox.push(new FlxText(0, 0, 250, "", 8));
+		thorBox.push(new FlxText(0, 0, 250, "Temperment: Good", 8));
+		page2.add(thorBox);
+		
+		var lokiBox:BorderedBox = new BorderedBox(20 + 260, 35, 0, Layout.VERTICAL);
+		var lokiIcon:FlxSprite = new FlxSprite(0, 0, AssetPaths.LokiHelmetIcon__jpg);
+		lokiIcon.scale.set(0.5, 0.5);
+		lokiIcon.updateHitbox();
+		lokiBox.push(lokiIcon);
+		lokiBox.push(new FlxText(0, 0, 250, "Loki", 16));
+		lokiBox.push(new FlxText(0, 0, 250, "", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "Demigod of trickery", 12));
+		lokiBox.push(new FlxText(0, 0, 250, "", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "Increases all characters' speed by 10%", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "Increases all characters' critical damage by 5%", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "BLAH BLAH BUFFS", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "", 8));
+		lokiBox.push(new FlxText(0, 0, 250, "Temperment: Angsty", 8));
+		page2.add(lokiBox);
+		
+		add(page1);
+		page2.exists = false;
+		add(page2);
+	}
+	
+	override public function update():Void 
+	{
+		super.update();
+		if (page2.exists) {
+			if (FlxG.keys.justPressed.LEFT) {
+				selectedDeity--;
+				if (selectedDeity < 0) {
+					selectedDeity = 1;//TODO:Make sure this becomes max
+				}
+			}
+			if (FlxG.keys.justPressed.RIGHT) {
+				selectedDeity++;
+				if (selectedDeity > 1) { //TODO:Make sure this becomes max
+					selectedDeity = 0;
+				}
+			}
+			selectorSprite.x = 20 + selectedDeity * 260;
+			selectorSprite.color = FlxRandom.intRanged();
+		}
+	}
+	
+	private function getDeityFromId(id:Int):Deity {
+		switch(id) {
+			case 0:
+				return new Thor();
+			case 1:
+				return new Loki();
+			default:
+				return new Thor();
+		}
+	}
+	
+	private function flipToPage(pageNumber:Int):Void {
+		if (pageNumber == 0) {
+			page1.exists = true;
+			page2.exists = false;
+		}
+		if (pageNumber == 1) {
+			page1.exists = false;
+			page2.exists = true;
+		}
+	}
+	
+	//TODO: Find a good way to rename the character
+	private var names:Array<String> = ["Joe", "Susan", "Bob", "Alex", "James", "Zack", "Connor", "Griffin", "Doug", "Alice", "Kelsey"];
+	private function getRandomName():String {
+		return names[Math.floor(Math.random() * names.length)];
 	}
 	
 	private function createCharacter():Actor {
-		var character:Actor = new Actor("New Character");
+		var character:Actor = new Actor(getRandomName());
 		var stats:StatSheet = new StatSheet();
 		rollRandomStats(stats);
 		character.setBaseStats(stats);
@@ -160,6 +253,10 @@ class PartyCreate extends FlxState
 				character.giveItem(new Potion1());
 			}
 		}
+		
+		character.setIcon(new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png));
+		character.setBattleSprite(new FlxSprite(0, 0, AssetPaths.CharacterBattleSprite__png));
+		character.setOverworldSprite(new FlxSprite(0, 0, AssetPaths.overworld__png));
 		
 		return character;
 	}

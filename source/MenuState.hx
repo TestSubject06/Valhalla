@@ -13,6 +13,9 @@ import maps.GameMap;
 
 /**
  * A FlxState which can be used for the game's menu.
+ * 
+ * 
+ * TODO: Next up: Transition into the dungeon mode - and get dungeon movement working
  */
 class MenuState extends FlxState
 {
@@ -50,7 +53,7 @@ class MenuState extends FlxState
 			//Generate a map
 			mainLayer.remove(map, true);
 			map = MapGenerator.generateMap(Dungeon, 54, 54, 45);
-			map.updateTilemap();
+			map.updateTilemap(AssetPaths.CaiTiles__png, false);
 			//Display the map
 			map.x = 200;
 			map.y = 25;

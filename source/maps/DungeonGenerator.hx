@@ -16,6 +16,8 @@ class DungeonGenerator
 	private static var result:GameMap;
 	private static var rooms:Array<Room>;
 	
+	//TODO: Stairs/party spawn point
+	
 	public static function generate(width:Int, height:Int, roomCount:Int):GameMap {
 		rooms = [];
 		result = new GameMap(width, height);
@@ -29,6 +31,19 @@ class DungeonGenerator
 		while (rooms.length < roomCount) {
 			generateRoom();
 		}
+		
+		//Set the tile above any filled tile to '1', anything else to '2'
+		var resultTile:Int = 0;
+		for (x in 0...width) {
+			for (y in 0...height) {
+				//if this is an open tile, and the tile above it is a wall
+				if (result.getMapTile(x, y, true) == 0 && result.getMapTile(x, y-1, true) == 1) {
+					result.setMapTile(x, y - 1, 2);
+				}
+				
+			}
+		}
+		
 		return result;
 	}
 	

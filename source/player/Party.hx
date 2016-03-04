@@ -1,5 +1,7 @@
 package player;
 
+import deities.Deity;
+
 /**
  * ...
  * @author Zack
@@ -10,7 +12,7 @@ class Party
 	
 	//A party has some header information such as a diety, party name
 	//And an array of party members
-	private var diety:Diety;
+	private var deity:Deity;
 	private var partyName:String;
 	private var members:Array<Actor>;
 	public function new() 
@@ -18,8 +20,16 @@ class Party
 		members = [];
 	}
 	
-	public function addActor(actor:Actor) {
+	public function addActor(actor:Actor):Void {
 		members.push(actor);
+	}
+	
+	public function setDeity(deity:Deity):Void {
+		this.deity = deity;
+	}
+	
+	public function getDeity():Deity {
+		return deity;
 	}
 	
 }
