@@ -19,6 +19,7 @@ import openfl.display.BitmapData;
 import player.Actor;
 import player.Party;
 import player.StatSheet;
+import states.Overworld;
 import ui.BorderedBox;
 import ui.layout.Layout;
 import openfl.geom.Rectangle;
@@ -145,7 +146,7 @@ class PartyCreate extends FlxState
 			party.setDeity(getDeityFromId(selectedDeity));
 			trace(party.getDeity().getName());
 			PartyInformation.setParty(party);
-			FlxG.switchState(new MenuState());//TODO: Replace with a real next-state
+			FlxG.switchState(new Overworld());//TODO: Replace with a real next-state
 		}));
 		
 		selectorSprite = new FlxSprite(0, 35, null);
@@ -254,6 +255,7 @@ class PartyCreate extends FlxState
 			}
 		}
 		
+		//TODO: Set all of these sprites' cachedBitmaps to persist. It's okay for monsters to get trashed on state resets, but the players need to stick around.
 		character.setIcon(new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png));
 		character.setBattleSprite(new FlxSprite(0, 0, AssetPaths.CharacterBattleSprite__png));
 		character.setOverworldSprite(new FlxSprite(0, 0, AssetPaths.overworld__png));

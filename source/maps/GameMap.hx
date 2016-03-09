@@ -1,5 +1,6 @@
 package maps;
 
+import flixel.FlxSprite;
 import flixel.tile.FlxTilemap;
 
 /**
@@ -10,6 +11,9 @@ import flixel.tile.FlxTilemap;
 class GameMap extends FlxTilemap
 {
 	public var mapData:Array<Int>;
+	//TODO: Possibly convert this to an array of entrances and exits, for branching paths?
+	public var stairsDown:FlxSprite;
+	public var stairsUp:FlxSprite;
 	public function new(width:Int, height:Int) 
 	{
 		super();
@@ -61,6 +65,28 @@ class GameMap extends FlxTilemap
 	public function updateTilemap(tiles:Dynamic = AssetPaths.autotiles__png, autotile:Bool = true):Void {
 		
 		loadMap(mapData, tiles, 0, 0, autotile ? FlxTilemap.AUTO : FlxTilemap.OFF, 0, 0, 1);
+	}
+	
+	//Takes in a tileX and a tileY and adds the stairs up there.
+	public function setStairsUp(x:Int, y:Int):Void {
+		stairsUp = new FlxSprite(x * 64, y * 64, AssetPaths.StairsUp__png);
+	}
+	
+	//Takes in a tileX and a tileY and adds the stairs up there.
+	public function setStairsDown(x:Int, y:Int, visible:Bool):Void {
+		stairsDown = new FlxSprite(x * 64, y * 64, AssetPaths.StairsDown__png);
+		stairsDown.visible = false;
+	}
+	
+	override public function draw():Void 
+	{
+		super.draw();
+		if (stairsDown != null) {
+			stairsDown.draw();
+		}
+		if (stairsUp != null) {
+			stairsUp.draw();
+		}
 	}
 	
 }

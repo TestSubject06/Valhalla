@@ -44,6 +44,16 @@ class DungeonGenerator
 			}
 		}
 		
+		//Choose a room, and place the stairs up somewhere in that room.
+		var endRoom = rooms[Math.floor(Math.random() * rooms.length)];
+		result.setStairsUp(endRoom.x + Math.floor(Math.random()*endRoom.width), endRoom.y + Math.floor(Math.random()*endRoom.height));
+		//Choose a different room, and place the stairs down in that room.
+		var startRoom = rooms[Math.floor(Math.random() * rooms.length)];
+		while (startRoom == endRoom) {
+			startRoom = rooms[Math.floor(Math.random() * rooms.length)];
+		}
+		result.setStairsDown(startRoom.x + Math.floor(Math.random()*startRoom.width), startRoom.y + Math.floor(Math.random()*startRoom.height), true);
+		
 		return result;
 	}
 	

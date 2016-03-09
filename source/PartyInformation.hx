@@ -29,7 +29,7 @@ class PartyInformation
 	private static var party:Party;
 	
 	public static function getParty():Party {
-		return party;
+		return PartyInformation.party;
 	}
 	
 	public static function setParty(party:Party):Void {

@@ -1,6 +1,8 @@
 package player;
 
 import deities.Deity;
+import flixel.FlxSprite;
+import flixel.util.FlxPoint;
 
 /**
  * ...
@@ -15,9 +17,11 @@ class Party
 	private var deity:Deity;
 	private var partyName:String;
 	private var members:Array<Actor>;
+	public var targetDestination:FlxPoint;
 	public function new() 
 	{
 		members = [];
+		targetDestination = new FlxPoint(0, 0);
 	}
 	
 	public function addActor(actor:Actor):Void {
@@ -30,6 +34,11 @@ class Party
 	
 	public function getDeity():Deity {
 		return deity;
+	}
+	
+	public function getOverworldSprite():FlxSprite {
+		//TODO: Implement intelligent logic that grabs the most powerful representative's overworld sprite.
+		return members[0].getOverworldSprite();
 	}
 	
 }
