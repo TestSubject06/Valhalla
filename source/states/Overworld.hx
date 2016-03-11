@@ -11,6 +11,10 @@ import player.Party;
 /**
  * ...
  * This is the overworld state. It's the junction into many menu sub-systems, as well as the roguelike dungeon crawling mode.
+ * 
+ * TODO: Going up/down stairs
+ * TODO: Menus for inventory and party management
+ * TODO: Basic combat transition
  * @author Zack
  */
 class Overworld extends FlxState
@@ -31,48 +35,39 @@ class Overworld extends FlxState
 		currentMap.updateTilemap(AssetPaths.CaiTiles__png, false);
 		playerParty = PartyInformation.getParty();
 		
-		trace("Created the map, and got the party");
 		enemies = [];
 		
 		add(currentMap);
 		
-		playerPartyPawn = new FlxSprite(0, 0, AssetPaths.overworld__png);//playerParty.getOverworldSprite();
-		//add(playerPartyPawn);
+		playerPartyPawn = playerParty.getOverworldSprite();
+		add(playerPartyPawn);
 		playerPartyPawn.x = currentMap.stairsDown.x;
 		playerPartyPawn.y = currentMap.stairsDown.y;
 		trace(playerParty.getDeity().getName());
 		trace(playerParty.getOverworldSprite().pixels);
 		
 		FlxG.camera.follow(playerPartyPawn);
-		trace("Finished the creation of the state");
-	}
-	
-	override public function draw():Void 
-	{
-		super.draw();
-		playerPartyPawn.draw();
 	}
 	
 	override public function update():Void 
 	{
-		trace("Updated");
 		super.update();
 		var actionPerformed:Bool = false;
 		//TODO: Make this much cleaner.
 		if (turnId == 0) {
-			if (FlxG.keys.anyJustPressed(["LEFT", "A"])) {
+			if (FlxG.keys.anyJustPressed(["LEFT", "A"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)-1, Math.floor(playerPartyPawn.y/64), true) == 0) {
 				playerParty.targetDestination.set(playerPartyPawn.x - 64, playerPartyPawn.y);
 				actionPerformed = true;
 			}
-			if (FlxG.keys.anyJustPressed(["RIGHT", "D"])) {
+			if (FlxG.keys.anyJustPressed(["RIGHT", "D"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)+1, Math.floor(playerPartyPawn.y/64), true) == 0) {
 				playerParty.targetDestination.set(playerPartyPawn.x + 64, playerPartyPawn.y);
 				actionPerformed = true;
 			}
-			if (FlxG.keys.anyJustPressed(["UP", "W"])) {
+			if (FlxG.keys.anyJustPressed(["UP", "W"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)-1, true) == 0) {
 				playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y - 64);
 				actionPerformed = true;
 			}
-			if (FlxG.keys.anyJustPressed(["DOWN", "S"])) {
+			if (FlxG.keys.anyJustPressed(["DOWN", "S"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)+1, true) == 0) {
 				playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y + 64);
 				actionPerformed = true;
 			}

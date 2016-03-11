@@ -256,9 +256,19 @@ class PartyCreate extends FlxState
 		}
 		
 		//TODO: Set all of these sprites' cachedBitmaps to persist. It's okay for monsters to get trashed on state resets, but the players need to stick around.
-		character.setIcon(new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png));
-		character.setBattleSprite(new FlxSprite(0, 0, AssetPaths.CharacterBattleSprite__png));
-		character.setOverworldSprite(new FlxSprite(0, 0, AssetPaths.overworld__png));
+		var helper:FlxSprite = new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png);
+		helper.cachedGraphics.persist = true;
+		character.setIcon(helper);
+		
+		helper = new FlxSprite(0, 0, AssetPaths.CharacterBattleSprite__png);
+		helper.cachedGraphics.persist = true;
+		character.setBattleSprite(helper);
+		
+		helper = new FlxSprite(0, 0, AssetPaths.GOLDEN_WARRIOR__png);
+		helper.cachedGraphics.persist = true;
+		character.setOverworldSprite(helper);
+		
+		helper = null;
 		
 		return character;
 	}
