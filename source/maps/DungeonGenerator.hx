@@ -16,8 +16,6 @@ class DungeonGenerator
 	private static var result:GameMap;
 	private static var rooms:Array<Room>;
 	
-	//TODO: Stairs/party spawn point
-	
 	public static function generate(width:Int, height:Int, roomCount:Int):GameMap {
 		rooms = [];
 		result = new GameMap(width, height);

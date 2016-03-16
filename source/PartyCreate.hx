@@ -146,7 +146,7 @@ class PartyCreate extends FlxState
 			party.setDeity(getDeityFromId(selectedDeity));
 			trace(party.getDeity().getName());
 			PartyInformation.setParty(party);
-			FlxG.switchState(new Overworld());//TODO: Replace with a real next-state
+			FlxG.switchState(new Overworld());
 		}));
 		
 		selectorSprite = new FlxSprite(0, 35, null);
@@ -255,7 +255,6 @@ class PartyCreate extends FlxState
 			}
 		}
 		
-		//TODO: Set all of these sprites' cachedBitmaps to persist. It's okay for monsters to get trashed on state resets, but the players need to stick around.
 		var helper:FlxSprite = new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png);
 		helper.cachedGraphics.persist = true;
 		character.setIcon(helper);

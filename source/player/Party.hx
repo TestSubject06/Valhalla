@@ -41,4 +41,8 @@ class Party
 		return members[0].getOverworldSprite();
 	}
 	
+	public function getMembers():Array<Actor> {
+		return members;
+	}
+	
 }

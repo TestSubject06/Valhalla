@@ -13,9 +13,6 @@ import maps.GameMap;
 
 /**
  * A FlxState which can be used for the game's menu.
- * 
- * 
- * TODO: Next up: Transition into the dungeon mode - and get dungeon movement working
  */
 class MenuState extends FlxState
 {

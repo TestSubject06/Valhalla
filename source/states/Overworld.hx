@@ -4,9 +4,11 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.util.FlxMath;
+import flixel.util.FlxPoint;
 import maps.DungeonGenerator;
 import maps.GameMap;
 import player.Party;
+import ui.CharacterPlate;
 
 /**
  * ...
@@ -27,6 +29,10 @@ class Overworld extends FlxState
 	
 	private var turnCount:Int = 0; //This might be useful for things later on.
 	private var turnId:Int = 0; //0 is idle. 1 is player movement, 2 is enemy movement.
+	private var playerPlates:Array<CharacterPlate>;
+	
+	private var menuOpen:Bool = false;
+	private var menuIndex:Int = 0;
 	override public function create():Void 
 	{
 		super.create();
@@ -36,6 +42,7 @@ class Overworld extends FlxState
 		playerParty = PartyInformation.getParty();
 		
 		enemies = [];
+		playerPlates = [];
 		
 		add(currentMap);
 		
@@ -47,6 +54,14 @@ class Overworld extends FlxState
 		trace(playerParty.getOverworldSprite().pixels);
 		
 		FlxG.camera.follow(playerPartyPawn);
+		
+		var index = 0;
+		for (actor in playerParty.getMembers()) {
+			var characterPlate:CharacterPlate = new CharacterPlate(160 * index + 10, FlxG.height - 64, actor);
+			playerPlates.push(characterPlate);
+			add(characterPlate);
+			index++;
+		}
 	}
 	
 	override public function update():Void 
@@ -55,21 +70,58 @@ class Overworld extends FlxState
 		var actionPerformed:Bool = false;
 		//TODO: Make this much cleaner.
 		if (turnId == 0) {
-			if (FlxG.keys.anyJustPressed(["LEFT", "A"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)-1, Math.floor(playerPartyPawn.y/64), true) == 0) {
-				playerParty.targetDestination.set(playerPartyPawn.x - 64, playerPartyPawn.y);
-				actionPerformed = true;
-			}
-			if (FlxG.keys.anyJustPressed(["RIGHT", "D"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)+1, Math.floor(playerPartyPawn.y/64), true) == 0) {
-				playerParty.targetDestination.set(playerPartyPawn.x + 64, playerPartyPawn.y);
-				actionPerformed = true;
-			}
-			if (FlxG.keys.anyJustPressed(["UP", "W"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)-1, true) == 0) {
-				playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y - 64);
-				actionPerformed = true;
-			}
-			if (FlxG.keys.anyJustPressed(["DOWN", "S"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)+1, true) == 0) {
-				playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y + 64);
-				actionPerformed = true;
+			
+			if (menuOpen) {
+				if (FlxG.keys.anyJustPressed(["LEFT", "A"])) {
+					playerPlates[menuIndex].collapse();
+					menuIndex--;
+					if (menuIndex < 0) {
+						menuIndex = 2;
+					}
+					playerPlates[menuIndex].expand();
+				}
+				if (FlxG.keys.anyJustPressed(["RIGHT", "D"])) {
+					playerPlates[menuIndex].collapse();
+					menuIndex++;
+					if (menuIndex > 2) {
+						menuIndex = 0;
+					}
+					playerPlates[menuIndex].expand();
+				}
+				if (FlxG.keys.anyJustPressed(["UP", "W"])) {
+					//TODO: Send up to menu
+					playerPlates[menuIndex].upPressed();
+				}
+				if (FlxG.keys.anyJustPressed(["DOWN", "S"])) {
+					//TODO: Send down to menu
+					playerPlates[menuIndex].downPressed();
+				}
+				if (FlxG.keys.anyJustPressed(["X", "SPACE"]) && menuOpen == true) {
+					menuOpen = false;
+					playerPlates[menuIndex].collapse();
+				}
+			}else {
+				if (FlxG.keys.anyJustPressed(["LEFT", "A"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)-1, Math.floor(playerPartyPawn.y/64), true) == 0) {
+					playerParty.targetDestination.set(playerPartyPawn.x - 64, playerPartyPawn.y);
+					actionPerformed = true;
+				}
+				if (FlxG.keys.anyJustPressed(["RIGHT", "D"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)+1, Math.floor(playerPartyPawn.y/64), true) == 0) {
+					playerParty.targetDestination.set(playerPartyPawn.x + 64, playerPartyPawn.y);
+					actionPerformed = true;
+				}
+				if (FlxG.keys.anyJustPressed(["UP", "W"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)-1, true) == 0) {
+					playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y - 64);
+					actionPerformed = true;
+				}
+				if (FlxG.keys.anyJustPressed(["DOWN", "S"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64), Math.floor(playerPartyPawn.y/64)+1, true) == 0) {
+					playerParty.targetDestination.set(playerPartyPawn.x, playerPartyPawn.y + 64);
+					actionPerformed = true;
+				}
+				if (FlxG.keys.anyJustPressed(["ENTER", "SPACE"]) && menuOpen == false) {
+					menuOpen = true;
+					menuIndex = 0;
+					playerPlates[menuIndex].expand();
+				}
 			}
 		}
 			

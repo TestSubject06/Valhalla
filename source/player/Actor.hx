@@ -18,9 +18,9 @@ class Actor
 	private var icon:FlxSprite;
 	private var overworldSprite:FlxSprite;
 	private var battleSprite:FlxSprite;
-	private var level:Int;
-	private var health:Int;
-	private var mana:Int;
+	public var level:Int;
+	public var health:Int;
+	public var mana:Int;
 	public function new(name:String) 
 	{
 		this.name = name;
