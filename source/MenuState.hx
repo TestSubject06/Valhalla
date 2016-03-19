@@ -3,11 +3,10 @@ package;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
-import flixel.group.FlxTypedGroup;
 import flixel.system.scaleModes.PixelPerfectScaleMode;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxRandom;
+import flixel.math.FlxRandom;
 import maps.MapGenerator;
 import maps.GameMap;
 
@@ -120,8 +119,8 @@ class MenuState extends FlxState
 	/**
 	 * Function that is called once every frame.
 	 */
-	override public function update():Void
+	override public function update(elapsed:Float):Void
 	{
-		super.update();
+		super.update(elapsed);
 	}	
 }

@@ -10,6 +10,7 @@ import skills.Skill;
  */
 class Actor
 {
+	public  static var MAX_INVENTORY:Int = 30;
 	private var name:String;
 	private var inventory:Array<Item>;
 	private var skillChain:Array<Skill>;
@@ -57,6 +58,10 @@ class Actor
 	
 	public function giveItem(item:Item):Void {
 		inventory.push(item);
+	}
+	
+	public function takeItem(item:Item):Void {
+		inventory.remove(item);
 	}
 	
 	//Icons are used where the avatar should be placed. Menus, turn orders, etc...

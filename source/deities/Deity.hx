@@ -6,7 +6,10 @@ package deities;
  */
 class Deity
 {
+	public static var NUM_DEITIES:Int = 2;
+	
 	private var name:String;
+	
 	public function new() 
 	{
 		

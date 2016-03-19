@@ -3,8 +3,8 @@ package states;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.util.FlxMath;
-import flixel.util.FlxPoint;
+import flixel.math.FlxMath;
+import flixel.math.FlxPoint;
 import maps.DungeonGenerator;
 import maps.GameMap;
 import player.Party;
@@ -50,8 +50,6 @@ class Overworld extends FlxState
 		add(playerPartyPawn);
 		playerPartyPawn.x = currentMap.stairsDown.x;
 		playerPartyPawn.y = currentMap.stairsDown.y;
-		trace(playerParty.getDeity().getName());
-		trace(playerParty.getOverworldSprite().pixels);
 		
 		FlxG.camera.follow(playerPartyPawn);
 		
@@ -64,9 +62,9 @@ class Overworld extends FlxState
 		}
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		var actionPerformed:Bool = false;
 		//TODO: Make this much cleaner.
 		if (turnId == 0) {
@@ -74,31 +72,26 @@ class Overworld extends FlxState
 			if (menuOpen) {
 				if (FlxG.keys.anyJustPressed(["LEFT", "A"])) {
 					playerPlates[menuIndex].collapse();
-					menuIndex--;
-					if (menuIndex < 0) {
-						menuIndex = 2;
-					}
+					menuIndex = FlxMath.wrap(--menuIndex, 0, 2);
 					playerPlates[menuIndex].expand();
 				}
 				if (FlxG.keys.anyJustPressed(["RIGHT", "D"])) {
 					playerPlates[menuIndex].collapse();
-					menuIndex++;
-					if (menuIndex > 2) {
-						menuIndex = 0;
-					}
+					menuIndex = FlxMath.wrap(++menuIndex, 0, 2);
 					playerPlates[menuIndex].expand();
 				}
 				if (FlxG.keys.anyJustPressed(["UP", "W"])) {
-					//TODO: Send up to menu
 					playerPlates[menuIndex].upPressed();
 				}
 				if (FlxG.keys.anyJustPressed(["DOWN", "S"])) {
-					//TODO: Send down to menu
 					playerPlates[menuIndex].downPressed();
 				}
 				if (FlxG.keys.anyJustPressed(["X", "SPACE"]) && menuOpen == true) {
 					menuOpen = false;
 					playerPlates[menuIndex].collapse();
+				}
+				if (FlxG.keys.anyJustPressed(["Z", "ENTER"])) {
+					playerPlates[menuIndex].select();
 				}
 			}else {
 				if (FlxG.keys.anyJustPressed(["LEFT", "A"]) && currentMap.getMapTile(Math.floor(playerPartyPawn.x/64)-1, Math.floor(playerPartyPawn.y/64), true) == 0) {
@@ -149,7 +142,6 @@ class Overworld extends FlxState
 	//Takes in a pawn and lerps it over several frames to x, y
 	//Returns true when the pawn made it.
 	private function slidePawnTo(pawn:FlxSprite, x:Float, y:Float):Bool {
-		trace("Slid Pawn");
 		pawn.x = FlxMath.lerp(pawn.x, x, 0.80);
 		pawn.y = FlxMath.lerp(pawn.y, y, 0.80);
 		if (Math.abs((pawn.x - x) + (pawn.y - y)) < 1) {
@@ -161,7 +153,6 @@ class Overworld extends FlxState
 	}
 	
 	private function warpPawnTo(pawn:FlxSprite, x:Int, y:Int):Bool {
-		trace("Warped Pawn");
 		//TODO: Cool animations?
 		pawn.x = x;
 		pawn.y = y;
@@ -169,13 +160,11 @@ class Overworld extends FlxState
 	}
 	
 	private function executeTurn():Void {
-		trace("Executed Turn");
 		turnId = 1;
 	}
 	
 	override public function destroy():Void 
 	{
-		trace("Destroyed");
 		remove(playerPartyPawn);//Make sure it doesn't get caught in the normal destroy process. It needs to hang around in memory for later.
 		super.destroy();
 	}

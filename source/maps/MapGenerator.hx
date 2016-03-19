@@ -34,6 +34,7 @@ class MapGenerator
 			default:
 				return null;
 		}
+		return null;
 	}
 	
 }

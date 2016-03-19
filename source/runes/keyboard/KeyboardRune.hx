@@ -1,11 +1,11 @@
 package runes.keyboard;
 
 import flixel.FlxSprite;
+import flixel.input.FlxInput;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxG;
 import flixel.input.keyboard.FlxKey;
 import flixel.text.FlxText;
-import flixel.util.FlxRandom;
 
 /**
  * ...
@@ -29,11 +29,11 @@ class KeyboardRune extends FlxSpriteGroup
 		super(0, 0, 0);
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		//Check to see if the current key we needed was just pressed.
-		if (FlxG.keys.checkStatus(FlxG.keys.getKeyCode(targetRune.charAt(progress).toUpperCase()), FlxKey.JUST_PRESSED) && !done) {
+		if (FlxG.keys.checkStatus(FlxKey.fromString(targetRune.charAt(progress).toUpperCase()), FlxInputState.JUST_PRESSED) && !done) {
 			trace("Rune Word Progressed. Just pressed:", targetRune.charAt(progress).toUpperCase());
 			letters[progress].color = 0x999999;
 			if (++progress >= targetRune.length) {
@@ -84,7 +84,7 @@ class KeyboardRune extends FlxSpriteGroup
 	}
 	
 	private function getRandomFrom(startIndex:Int, endIndex:Int):String {
-		return runes[FlxRandom.intRanged(startIndex, endIndex)];
+		return runes[FlxG.random.int(startIndex, endIndex)];
 	}
 	
 	public function endRune():Void {

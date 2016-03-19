@@ -8,10 +8,10 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import flixel.util.FlxRandom;
 import items.Item;
 import items.Potion1;
 import items.Stick;
@@ -192,24 +192,18 @@ class PartyCreate extends FlxState
 		add(page2);
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
-		super.update();
+		super.update(elapsed);
 		if (page2.exists) {
 			if (FlxG.keys.justPressed.LEFT) {
-				selectedDeity--;
-				if (selectedDeity < 0) {
-					selectedDeity = 1;//TODO:Make sure this becomes max
-				}
+				selectedDeity = FlxMath.wrap(--selectedDeity, 0, Deity.NUM_DEITIES);
 			}
 			if (FlxG.keys.justPressed.RIGHT) {
-				selectedDeity++;
-				if (selectedDeity > 1) { //TODO:Make sure this becomes max
-					selectedDeity = 0;
-				}
+				selectedDeity = FlxMath.wrap(++selectedDeity, 0, Deity.NUM_DEITIES);
 			}
 			selectorSprite.x = 20 + selectedDeity * 260;
-			selectorSprite.color = FlxRandom.intRanged();
+			selectorSprite.color = FlxG.random.color();
 		}
 	}
 	
@@ -256,15 +250,15 @@ class PartyCreate extends FlxState
 		}
 		
 		var helper:FlxSprite = new FlxSprite(0, 0, AssetPaths.CharacterPortrait__png);
-		helper.cachedGraphics.persist = true;
+		helper.graphic.persist = true;
 		character.setIcon(helper);
 		
 		helper = new FlxSprite(0, 0, AssetPaths.CharacterBattleSprite__png);
-		helper.cachedGraphics.persist = true;
+		helper.graphic.persist = true;
 		character.setBattleSprite(helper);
 		
 		helper = new FlxSprite(0, 0, AssetPaths.GOLDEN_WARRIOR__png);
-		helper.cachedGraphics.persist = true;
+		helper.graphic.persist = true;
 		character.setOverworldSprite(helper);
 		
 		helper = null;

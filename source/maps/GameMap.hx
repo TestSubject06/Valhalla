@@ -63,8 +63,10 @@ class GameMap extends FlxTilemap
 	}
 	
 	public function updateTilemap(tiles:Dynamic = AssetPaths.autotiles__png, autotile:Bool = true):Void {
-		
-		loadMap(mapData, tiles, 0, 0, autotile ? FlxTilemap.AUTO : FlxTilemap.OFF, 0, 0, 1);
+		trace(tiles);
+		trace(autotile);
+		loadMapFromArray(mapData, widthInTiles, heightInTiles, tiles, 0, 0, autotile?AUTO:OFF, 0, 0, 1);
+		//loadMapFromArray(mapData, 0, 0, tiles, 64, 64, autotile?AUTO:OFF);
 	}
 	
 	//Takes in a tileX and a tileY and adds the stairs up there.

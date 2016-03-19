@@ -37,7 +37,7 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 	{
 		super(0, 0, 16);
 		totalTime = 5.0;
-		timerBar = new FlxBar(FlxG.width / 2 - 100, FlxG.height - 20, FlxBar.FILL_LEFT_TO_RIGHT, 200, 10, this, "timer", 0.0, totalTime, true);
+		timerBar = new FlxBar(FlxG.width / 2 - 100, FlxG.height - 20, LEFT_TO_RIGHT, 200, 10, this, "timer", 0.0, totalTime, true);
 		add(timerBar);
 		minigameRunning = false;
 		
@@ -89,7 +89,7 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 		add((keyboardRune = new KeyboardRune()));
 	}
 	
-	override public function update():Void 
+	override public function update(elapsed:Float):Void 
 	{
 		if (minigameRunning) {
 			//spellBackdrop.angle += FlxG.elapsed * 30;
@@ -98,7 +98,7 @@ class RuneDrawingMinigame extends FlxSpriteGroup
 			spellBackdropFire2.angle -= FlxG.elapsed * 30;
 			spellBackdropFire4.angle += FlxG.elapsed * 30;
 			//spellBackdropPulse.scale.set(Math.sin(timer*20)*0.02+0.69, Math.sin(timer*20)*0.02+0.69);
-			super.update();	
+			super.update(elapsed);	
 			timer -= FlxG.elapsed;
 			if (timer <= 0) {
 				minigameRunning = false;

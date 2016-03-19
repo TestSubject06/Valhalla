@@ -1,7 +1,6 @@
 package maps;
 import flixel.FlxG;
-import flixel.util.FlxPoint;
-import flixel.util.FlxRandom;
+import flixel.math.FlxPoint;
 
 /**
  * ...

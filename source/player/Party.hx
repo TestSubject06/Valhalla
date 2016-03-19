@@ -2,7 +2,7 @@ package player;
 
 import deities.Deity;
 import flixel.FlxSprite;
-import flixel.util.FlxPoint;
+import flixel.math.FlxPoint;
 
 /**
  * ...
